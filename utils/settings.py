@@ -11,6 +11,9 @@ SHEET_3_NAME = "source_2"  # название 3-го листа
 # ставка дисконтирования округляется до указанных знаков
 DISCOUNT_RATE_ROUND = 2
 
+# Значение округления денежных единиц
+CURRENCY_ROUNDING_VALUE = 2
+
 if platform.system() == "Windows":
     INPUT_FILE_PATH = rf"{BASE_DIR}\src\{FILENAME}"
 else:  # Linux, MacOS
