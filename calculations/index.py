@@ -145,14 +145,38 @@ class Index:
                 for i in range(len(sales_vol))]
 
     @staticmethod
-    def profit_tax():
-        # Н (Налог на прибыль)(₽)
-        pass
+    def profit_tax(taxable_profit_data: list[float],
+                   tax_rate: float) -> list[float]:
+        """
+        Рассчитывает налог на прибыль.
+
+        :param taxable_profit_data: Налогооблагаемая прибыль
+        :param tax_rate: Налоговая ставка
+        :return: Налог на прибыль. Если налогооблагаемая прибыль является
+         отрицательным числом, то налог будет равен 0.
+        """
+
+        return [max(profit * tax_rate, 0) for profit in taxable_profit_data]
 
     @staticmethod
-    def net_profit():
-        # ЧП (Чистая прибыль)(₽)
-        pass
+    def net_profit(taxable_profit_data: list[float],
+                   profit_tax_data: list[float]) -> list[float]:
+        """
+        Рассчитывает чистую прибыль.
+
+        :param taxable_profit_data: Налогооблагаемая прибыль
+        :param profit_tax_data: Налог на прибыль
+        :return: Чистая прибыль.
+        """
+
+        if len(taxable_profit_data) != len(profit_tax_data):
+            raise ValueError(
+                "Количество элементов в 'Налогооблагаемая прибыль' "
+                "и 'Налог на прибыль' различаются")
+
+        return [round(taxable_profit_data[i] - profit_tax_data[i],
+                      CURRENCY_ROUNDING_VALUE)
+                for i in range(len(taxable_profit_data))]
 
     @staticmethod
     def cash_flow_from_op():
