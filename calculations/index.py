@@ -111,8 +111,7 @@ class Index:
         zeros = [0] * (new_machine_lifespan - nmdp)
 
         if nmdp == 0:
-            raise ValueError("Амортизационный период для нового "
-                             "оборудования не может быть равен 0")
+            return zeros
 
         if nmdp > new_machine_lifespan:
             raise ValueError("Амортизационный период нового оборудования "
