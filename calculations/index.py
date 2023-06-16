@@ -86,14 +86,63 @@ class Index:
                 for t, costs in enumerate(production_costs_per_unit, start=1)]
 
     @staticmethod
-    def depreciation_allowance():
-        # А (Амортизационные отчисления)(₽)
-        pass
+    def depreciation_allowance(new_machine_price: int | float,
+                               new_machine_depreciation_period: int,
+                               new_machine_lifespan: int) -> list[float]:
+        """
+        Рассчитывает амортизационные отчисления.
+
+        :param new_machine_price: Цена нового оборудования
+        :param new_machine_depreciation_period: Срок амортизации
+        нового оборудования
+        :param new_machine_lifespan: Срок службы нового оборудования
+        :return: Амортизационные отчисления за new_machine_depreciation_period
+        период. Если new_machine_depreciation_period равен нулю, возвращает
+        список нулей, длина списка равна new_machine_lifespan.
+        Если new_machine_lifespan и new_machine_depreciation_period
+        разные, то есть, new_machine_depreciation_period меньше, чем
+        new_machine_lifespan, то список заполняется нулями.
+        """
+
+        # сокращенное название переменной
+        nmdp = new_machine_depreciation_period
+
+        if nmdp > new_machine_lifespan:
+            raise ValueError("Амортизационный период нового оборудования "
+                             "не может превышать срок службы оборудования")
+
+        # список из нулей
+        zeros = [0] * (new_machine_lifespan - nmdp)
+
+        if nmdp == 0:
+            return zeros
+
+        depreciation = [round(new_machine_price / nmdp,
+                              CURRENCY_ROUNDING_VALUE)] * nmdp
+        return depreciation + zeros  # depreciation.extend(zeros)
 
     @staticmethod
-    def taxable_profit():
-        # НОП (Налогооблагаемая прибыль)(₽)
-        pass
+    def taxable_profit(sales_vol: list[float | int],
+                       prod_costs: list[float],
+                       depreciation: list[float]) -> list[float]:
+
+        """
+        Рассчитывает налогооблагаемую прибыль.
+
+        :param sales_vol: Объём реализации
+        :param prod_costs: Издержки производства
+        :param depreciation: Амортизационные отчисления
+        :return: Налогооблагаемая прибыль
+        """
+
+        if not (len(sales_vol) == len(prod_costs) == len(depreciation)):
+            raise ValueError("Количество элементов в 'Объём реализации', "
+                             "'Издержки производства' и "
+                             "'Амортизационные отчисления' различаются")
+
+        return [round(sales_vol[i] - prod_costs[i] - depreciation[i],
+                      CURRENCY_ROUNDING_VALUE)
+                for i in range(len(sales_vol))]
 
     @staticmethod
     def profit_tax():
