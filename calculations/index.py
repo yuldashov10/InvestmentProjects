@@ -156,7 +156,8 @@ class Index:
          отрицательным числом, то налог будет равен 0.
         """
 
-        return [max(profit * tax_rate, 0) for profit in taxable_profit_data]
+        return [round(max(profit * tax_rate, 0), CURRENCY_ROUNDING_VALUE)
+                for profit in taxable_profit_data]
 
     @staticmethod
     def net_profit(taxable_profit_data: list[float],
