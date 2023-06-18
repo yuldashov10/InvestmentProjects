@@ -230,7 +230,8 @@ class Index:
 
         Первый элемент списка working_capital_data добавляется в gain 
         без изменений, затем в gain записывается значение по формуле:
-        `текущее_значение - предыдущее`
+        `текущее_значение - предыдущее`. Последним элементом добавляется
+        в gain последнее значение из working_capital_data
 
         :param working_capital_data: Оборотный капитал
         :return: Прирост оборотного капитала
@@ -240,7 +241,10 @@ class Index:
                       CURRENCY_ROUNDING_VALUE)
                 for i in range(len(working_capital_data))]
 
-        gain.insert(0, working_capital_data[0])
+        FIRST_ITEM = working_capital_data[0]
+        LAST_ITEM = -working_capital_data[-1]  # добавляется знак минус
+        gain.insert(0, FIRST_ITEM)
+        gain.append(LAST_ITEM)
 
         return gain
 
@@ -295,7 +299,8 @@ class Index:
     def cash_flow(depreciation: list[float],
                   net_profit_data: list[float],
                   working_capital_gain_data: list[float],
-                  capital_investments_data: list[float]) -> list[float]:
+                  capital_investments_data: list[float],
+                  inflation: bool = False) -> list[float]:
         """
         Рассчитывает Cash Flow.
 
@@ -312,12 +317,15 @@ class Index:
         :param net_profit_data: Чистая прибыль
         :param working_capital_gain_data: Прирост оборотного капитала
         :param capital_investments_data: Капитальные выложения
+        :param inflation: Расчеты с учетом инфляции. По умолчанию False
         :return: Cash Flow
         """
 
         FIRST_YEAR_COST = 0
 
-        depreciation.insert(0, FIRST_YEAR_COST)
+        if not inflation:
+            depreciation.insert(0, FIRST_YEAR_COST)
+
         net_profit_data.insert(0, FIRST_YEAR_COST)
 
         if not (len(depreciation) ==
@@ -332,8 +340,10 @@ class Index:
 
         return [
             round(
-                (depreciation[i] + net_profit_data[i]) -
-                (working_capital_gain_data[i] - capital_investments_data[i]),
+                depreciation[i] +
+                net_profit_data[i] -
+                working_capital_gain_data[i] -
+                capital_investments_data[i],
                 CURRENCY_ROUNDING_VALUE
             )
             for i in range(len(depreciation))
