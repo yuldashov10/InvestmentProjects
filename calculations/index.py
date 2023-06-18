@@ -202,7 +202,7 @@ class Index:
                 "и 'Чистая прибыль' различаются"
             )
 
-        return [round(depreciation[i] - net_profit_data[i],
+        return [round(depreciation[i] + net_profit_data[i],
                       CURRENCY_ROUNDING_VALUE)
                 for i in range(len(depreciation))]
 
@@ -224,11 +224,10 @@ class Index:
     @staticmethod
     def working_capital_gain(
             working_capital_data: list[float]) -> list[float]:
-
         """
         Рассчитывает прирост оборотного капитала.
 
-        Первый элемент списка working_capital_data добавляется в gain 
+        Первый элемент списка working_capital_data добавляется в gain
         без изменений, затем в gain записывается значение по формуле:
         `текущее_значение - предыдущее`. Последним элементом добавляется
         в gain последнее значение из working_capital_data
@@ -239,7 +238,7 @@ class Index:
 
         gain = [round(working_capital_data[i + 1] - working_capital_data[i],
                       CURRENCY_ROUNDING_VALUE)
-                for i in range(len(working_capital_data))]
+                for i in range(len(working_capital_data) - 1)]
 
         FIRST_ITEM = working_capital_data[0]
         LAST_ITEM = -working_capital_data[-1]  # добавляется знак минус
@@ -269,7 +268,6 @@ class Index:
             - Первый элемент списка: Равен 0
             - Последний элемент списка: old_liquidation - (old_liquidation * tax_rate)
         - Между этими элементами могут быть добавлены значение 0
-
 
         :param period: Период времени (Срок службы нового оборудования)
         :param new_machine_price: Цена нового оборудования
