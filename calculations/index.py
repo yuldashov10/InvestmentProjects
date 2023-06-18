@@ -180,31 +180,174 @@ class Index:
                 for i in range(len(taxable_profit_data))]
 
     @staticmethod
-    def cash_flow_from_op():
-        # CFFO (Cash Flow From Operations)(₽)
-        # Операционный денежный поток
-        pass
+    def cash_flow_from_op(depreciation: list[float],
+                          net_profit_data: list[float]) -> list[float]:
+        """
+        Рассчитывает "Cash Flow From Operations".
+
+        Денежные потоки от операций (CFFO) — это мера денежных средств,
+        которые компания генерирует в результате своей обычной деятельности.
+        Сюда входят деньги от таких вещей, как продажи, а также деньги,
+        которые тратятся на такие вещи, как заработная плата, аренда и
+        другие расходы.
+
+        :param depreciation: Амортизационные отчисления
+        :param net_profit_data: Чистая прибыль
+        :return: Cash Flow From Operations
+        """
+
+        if len(depreciation) != len(net_profit_data):
+            raise ValueError(
+                "Количество элементов в 'Амортизационные отчисления' "
+                "и 'Чистая прибыль' различаются"
+            )
+
+        return [round(depreciation[i] + net_profit_data[i],
+                      CURRENCY_ROUNDING_VALUE)
+                for i in range(len(depreciation))]
 
     @staticmethod
-    def working_capital():
-        # ОК (Оборотный капитал)(₽)
-        pass
+    def working_capital(sales_vol: list[float | int],
+                        capital_requirement: float) -> list[float]:
+        """
+        Рассчитывает оборотный капитал.
+
+        :param sales_vol: Объём реализации
+        :param capital_requirement: Потребность в оборотном капитале
+        :return: Оборотный капитал
+        """
+
+        return [round(vol * capital_requirement,
+                      CURRENCY_ROUNDING_VALUE)
+                for vol in sales_vol]
 
     @staticmethod
-    def working_capital_gain():
-        # ПОК (Прирост оборотного капитала)(₽)
-        pass
+    def working_capital_gain(
+            working_capital_data: list[float]) -> list[float]:
+
+        """
+        Рассчитывает прирост оборотного капитала.
+
+        Первый элемент списка working_capital_data добавляется в gain
+        без изменений, затем в gain записывается значение по формуле:
+        `текущее_значение - предыдущее`. Последним элементом добавляется
+        в gain последнее значение из working_capital_data
+
+        :param working_capital_data: Оборотный капитал
+        :return: Прирост оборотного капитала
+        """
+
+        gain = [round(working_capital_data[i + 1] - working_capital_data[i],
+                      CURRENCY_ROUNDING_VALUE)
+                for i in range(len(working_capital_data) - 1)]
+
+        FIRST_ITEM = working_capital_data[0]
+        LAST_ITEM = -working_capital_data[-1]  # добавляется знак минус
+        gain.insert(0, FIRST_ITEM)
+        gain.append(LAST_ITEM)
+
+        return gain
 
     @staticmethod
-    def capital_investments():
-        # КВ (Капитальные вложения)(₽)
-        pass
+    def capital_investments(period: int,
+                            new_machine_price: int | float,
+                            old_liquidation: int | float,
+                            new_liquidation: int | float,
+                            tax_rate: float,
+                            implemented=None) -> list[float]:
+        """
+        Рассчитывает капитальные выложения.\n\n
+
+        ---
+
+        **Первый и последний элемент рассчитываются по следующим формулам:**
+
+        - При реализации:
+            - Первый элемент списка: new_machine_price - (old_liquidation * (1 - tax_rate))
+            - Последний элемент списка: new_liquidation - (new_liquidation * tax_rate)
+        - При отказе от реализации:
+            - Первый элемент списка: Равен 0
+            - Последний элемент списка: old_liquidation - (old_liquidation * tax_rate)
+        - Между этими элементами могут быть добавлены значение 0
+
+
+        :param period: Период времени (Срок службы нового оборудования)
+        :param new_machine_price: Цена нового оборудования
+        :param old_liquidation: Ликвидационная стоимость старого оборудования
+        :param new_liquidation: Ликвидационная стоимость нового оборудования
+        :param tax_rate: Ставка налога на прибыль
+        :param implemented: При реализации или при отказе от реализации.
+        По умолчанию None
+        :return: Капитальные выложения
+        """
+
+        zeros: list[int | float] = [0] * period
+
+        if implemented is not None:
+            last_item = old_liquidation - (old_liquidation * tax_rate)
+            zeros.append(last_item)
+            return zeros
+
+        first_item = new_machine_price - (old_liquidation * (1 - tax_rate))
+        last_item = new_liquidation - (new_liquidation * tax_rate)
+        zeros[0] = first_item  # заменить первый элемент
+        zeros.append(last_item)
+
+        return zeros
 
     @staticmethod
-    def cash_flow():
-        # Денежный поток
-        # CF (Cash Flow)(₽)
-        pass
+    def cash_flow(depreciation: list[float],
+                  net_profit_data: list[float],
+                  working_capital_gain_data: list[float],
+                  capital_investments_data: list[float],
+                  inflation: bool = False) -> list[float]:
+        """
+        Рассчитывает Cash Flow.
+
+        Cash Flow (денежный поток) показывает реальный объем наличных
+        и денег на счетах компании. Чтобы рассчитать показатель, нужно
+        сложить все поступления денег за выбранный период и вычесть из
+        них уже понесенные затраты - выбытия денег со счета.
+
+        В начале реализации проекта (первый год) не может быть амортизации
+        и чистой прибыли, поэтому к исходным данным depreciation и
+        net_profit_data в начале добавляется значение 0 (ноль)
+
+        :param depreciation: Амортизационные отчисления
+        :param net_profit_data: Чистая прибыль
+        :param working_capital_gain_data: Прирост оборотного капитала
+        :param capital_investments_data: Капитальные выложения
+        :param inflation: Расчеты с учетом инфляции. По умолчанию False
+        :return: Cash Flow
+        """
+
+        FIRST_YEAR_COST = 0
+
+        if not inflation:
+            depreciation.insert(0, FIRST_YEAR_COST)
+
+        net_profit_data.insert(0, FIRST_YEAR_COST)
+
+        if not (len(depreciation) ==
+                len(net_profit_data) ==
+                len(working_capital_gain_data) ==
+                len(capital_investments_data)):
+            raise ValueError(
+                "Количество элементов в 'Амортизационные отчисления', "
+                "'Чистая прибыль', 'Прирост оборотного капитала' и "
+                "'Капитальные выложения' различаются"
+            )
+
+        return [
+            round(
+                depreciation[i] +
+                net_profit_data[i] -
+                working_capital_gain_data[i] -
+                capital_investments_data[i],
+                CURRENCY_ROUNDING_VALUE
+            )
+            for i in range(len(depreciation))
+        ]
 
 
 if __name__ == "__main__":
