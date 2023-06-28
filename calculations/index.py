@@ -7,7 +7,7 @@ class Index:
     def sales_volume(
             annual_sales: list[int],
             unit_price: float | int,
-            inflation=None) -> list[float | int]:
+            inflation: float = None) -> list[float | int]:
         """
         Рассчитывает объем продаж с учетом инфляции и без нее.
 
@@ -47,7 +47,7 @@ class Index:
     @staticmethod
     def production_costs(annual_sales: list[int],
                          production_costs_per_unit: list[float],
-                         inflation=None) -> list[float]:
+                         inflation: float = None) -> list[float]:
         """
         Рассчитывает производственные издержки на единицу продукции
         с учетом инфляции и без нее.
@@ -253,7 +253,7 @@ class Index:
                             old_liquidation: int | float,
                             new_liquidation: int | float,
                             tax_rate: float,
-                            implemented=None) -> list[float]:
+                            implemented: bool = None) -> list[float]:
         """
         Рассчитывает капитальные выложения.\n\n
 
@@ -298,7 +298,7 @@ class Index:
                   net_profit_data: list[float],
                   working_capital_gain_data: list[float],
                   capital_investments_data: list[float],
-                  inflation: bool = False) -> list[float]:
+                  inflation: float = None) -> list[float]:
         """
         Рассчитывает Cash Flow.
 
@@ -321,7 +321,7 @@ class Index:
 
         FIRST_YEAR_COST = 0
 
-        if not inflation:
+        if inflation is not None:
             depreciation.insert(0, FIRST_YEAR_COST)
 
         net_profit_data.insert(0, FIRST_YEAR_COST)

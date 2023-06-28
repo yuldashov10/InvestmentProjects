@@ -1,7 +1,7 @@
 import sys
 
 from utils.settings import INPUT_FILE_PATH, SHEET_1_NAME
-from sheet_utils import remove_first_item, open_excel_file
+from sheets.sheet_utils import remove_first_item, open_excel_file
 
 data = open_excel_file(INPUT_FILE_PATH, SHEET_1_NAME)
 
@@ -24,15 +24,15 @@ except Exception as err:
     sys.stdout.write(f"Тип ошибки: {err}")
     sys.exit(-1)
 
-# очищаются все списки от значения nan
-remove_first_item(SALES_VOL_YES)
-remove_first_item(SALES_VOL_NO)
-remove_first_item(PRODUCTION_COSTS_YES)
-remove_first_item(PRODUCTION_COSTS_NO)
+else:
+    # очищаются все списки от значения nan
+    remove_first_item(SALES_VOL_YES)
+    remove_first_item(SALES_VOL_NO)
+    remove_first_item(PRODUCTION_COSTS_YES)
+    remove_first_item(PRODUCTION_COSTS_NO)
 
 if __name__ == "__main__":
     print(SALES_VOL_YES)
     print(SALES_VOL_NO)
     print(PRODUCTION_COSTS_YES)
     print(PRODUCTION_COSTS_NO)
-    
