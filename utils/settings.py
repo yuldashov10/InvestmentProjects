@@ -14,6 +14,41 @@ DISCOUNT_RATE_ROUND = 2
 # Значение округления денежных единиц
 CURRENCY_ROUNDING_VALUE = 2
 
+# Амортизационный период в случае отказа от реализации проекта
+DEPRECIATION_PERIOD_WHEN_PROJECT_NOT_IMPLEMENTED = 0
+
+# Расстояние между данными
+DATA_SPACING = 5
+
+FIRST_STEP_TITLES_KEYS: tuple[str, ...] = (
+    "years", "sales_volume",
+    "production_costs", "depreciation_allowance",
+    "taxable_profit", "profit_tax",
+    "net_profit", "cash_flow_from_op",
+    "working_capital", "working_capital_gain",
+    "capital_investments", "cash_flow"
+)
+
+FIRST_STEP_TITLES: dict[int, str] = {
+    1: 'Годы',
+    2: 'ОР (Объем реализации)(₽)',
+    3: 'ИП (Издержки производства)(₽)',
+    4: 'А (Амортизационные отчисления)(₽)',
+    5: 'НОП (Налогооблагаемая прибыль)(₽)',
+    6: 'Н (Налог на прибыль)(₽)',
+    7: 'ЧП (Чистая прибыль)(₽)',
+    8: 'CFFO (Cash Flow From Operations)(₽)',
+    9: 'ОК (Оборотный капитал)(₽)',
+    10: 'ПОК (Прирост оборотного капитала)(₽)',
+    11: 'КВ (Капитальные вложения)(₽)',
+    12: 'CF (Cash Flow)(₽)',
+}
+
+FIRST_STEP_SUBTITLES: dict[int, str] = {
+    1: "При реализации проекта",
+    2: "При отказе от реализации"
+}
+
 if platform.system() == "Windows":
     INPUT_FILE_PATH = rf"{BASE_DIR}\src\{FILENAME}"
 else:  # Linux, MacOS
