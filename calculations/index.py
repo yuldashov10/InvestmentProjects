@@ -321,8 +321,7 @@ class Index:
 
         FIRST_YEAR_COST = 0
 
-        if inflation is None:
-            depreciation.insert(0, FIRST_YEAR_COST)
+        depreciation.insert(0, FIRST_YEAR_COST)
 
         net_profit_data.insert(0, FIRST_YEAR_COST)
 

@@ -1,6 +1,8 @@
 from pathlib import Path
 import platform
 
+VARIANT = 7
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 FILENAME = "source.xlsx"  # название исходного Excel файла
 
@@ -51,8 +53,10 @@ FIRST_STEP_SUBTITLES: dict[int, str] = {
 
 if platform.system() == "Windows":
     INPUT_FILE_PATH = rf"{BASE_DIR}\src\{FILENAME}"
+    RESULT_FILE_PATH = rf"{BASE_DIR}\result\variant_{VARIANT}_data.xlsx"
 else:  # Linux, MacOS
     INPUT_FILE_PATH = rf"{BASE_DIR}/src/{FILENAME}"
+    RESULT_FILE_PATH = rf"{BASE_DIR}/result/variant_{VARIANT}_data.xlsx"
 
 if __name__ == "__main__":
     print(BASE_DIR)

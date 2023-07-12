@@ -33,6 +33,7 @@ from utils.settings import (
     FIRST_STEP_SUBTITLES,
     FIRST_STEP_TITLES,
 )
+from investments.excel_utils import ModifyExcelFile
 
 
 class InvestmentBasic:
@@ -240,6 +241,15 @@ class InvestmentBasic:
         """
         writer.sheets.update({ws.title: ws for ws in writer.book.worksheets})
 
+    @staticmethod
+    def __autofit_columns(file_path) -> None:
+        """
+        Выравнивает все столбцы на всех листах файла Excel.
+        :param file_path: Путь до файла
+        :return: None
+        """
+        ModifyExcelFile.auto_fit_columns(file_path)
+
     def append_data_to_excel(self,
                              file_path: str,
                              data: pd.DataFrame,
@@ -294,6 +304,8 @@ class InvestmentBasic:
         )
         writer.close()
 
+        self.__autofit_columns(file_path)
+
 
 if __name__ == "__main__":
     implemented = InvestmentBasic(
@@ -308,7 +320,7 @@ if __name__ == "__main__":
         NEW_MACHINE_LIQUIDATION_VALUE,
         OLD_MACHINE_LIQUIDATION_VALUE,
         TAX_RATE,
-        is_implemented=True,
+        is_implemented=True
     )
     # print("implemented")
     # res_1 = implemented.get_data()
@@ -326,7 +338,7 @@ if __name__ == "__main__":
         NEW_MACHINE_LIQUIDATION_VALUE,
         OLD_MACHINE_LIQUIDATION_VALUE,
         TAX_RATE,
-        is_implemented=False,
+        is_implemented=False
     )
     # print("\nnot_implemented")
     # res_2 = not_implemented.get_data()
@@ -350,7 +362,7 @@ if __name__ == "__main__":
         is_truncate_sheet=True
     )
 
-    implemented.append_data_to_excel(
+    not_implemented.append_data_to_excel(
         filename,
         df,
         sheet_name="main1",
@@ -381,17 +393,4 @@ if __name__ == "__main__":
         df2,
         sheet_name="main3",
         index=False,
-    )
-    implemented.append_data_to_excel(
-        filename,
-        df2,
-        sheet_name="main4",
-        index=False,
-    )
-    implemented.append_data_to_excel(
-        filename,
-        df2,
-        sheet_name="main4",
-        index=False,
-        is_truncate_sheet=True
     )
