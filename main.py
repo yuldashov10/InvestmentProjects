@@ -1,6 +1,7 @@
 import pandas as pd
 
 from investments.base import InvestmentBasic
+from investments.excel_utils import BuildChart
 from sheets.sheet_1_data import (
     PRODUCTION_COSTS_NO,
     PRODUCTION_COSTS_YES,
@@ -168,5 +169,16 @@ class Basic:
 
 
 if __name__ == "__main__":
-    step_1 = Basic()
-    step_1.write_step_one_to_excel_file()
+    # step_1 = Basic()
+    # step_1.write_step_one_to_excel_file()
+    LAST_COLUMN_NUM = 12
+    chart_obj = BuildChart(r"result\variant_7_data.xlsx",
+                           "Основной",
+                           LAST_COLUMN_NUM)
+
+    labels = [
+        ("CASH FLOW при реализации", "Период времени", "Млн.руб."),
+        ("CASH FLOW при отказе", "Период времени", "Млн.руб."),
+    ]
+
+    chart_obj.bar_chart(labels)
