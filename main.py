@@ -1,7 +1,6 @@
 import pandas as pd
 
 from investments.base import InvestmentBasic
-
 from sheets.sheet_1_data import (
     PRODUCTION_COSTS_NO,
     PRODUCTION_COSTS_YES,
@@ -29,28 +28,78 @@ from utils.settings import (
 )
 
 
-class RunStep:
-    def __init__(self,
-                 sheet_name: str,
-                 inflation: float = None,
-                 is_implemented: bool = None,
-                 is_truncate_sheet: bool = None):
-        self.__sheet_name = sheet_name
-        self.__is_inflation = inflation
-        self.__is_implemented = is_implemented
-        self.__is_truncate_sheet = is_truncate_sheet
+class Basic:
+    def __init__(self):
+        self.__filename: str = RESULT_FILE_PATH
 
-        if is_implemented is None:
-            self.__data = self.__init_not_implemented()
-            self.__df = pd.DataFrame(self.__data.get_data())
-        else:
-            self.__data = self.__init_implemented()
-            self.__df = pd.DataFrame(self.__data.get_data())
+    def get_data_implemented_without_inflation(self) -> InvestmentBasic:
+        """
+        Возвращает данные без учета инфляции при реализации
+        инвестиционного проекта.
+        :return: InvestmentBasic
+        """
+        args = {
+            "inflation": None,
+            "implemented": True
+        }
+        return self.__init_implemented(*args.values())
 
-        self.__filename = RESULT_FILE_PATH
-        self.__rename_df_cols()
+    def get_data_not_implemented_without_inflation(self) -> InvestmentBasic:
+        """
+        Возвращает данные без учета инфляции при отказе от реализации
+        инвестиционного проекта.
+        :return: InvestmentBasic
+        """
+        args = {
+            "inflation": None,
+            "implemented": None
+        }
+        return self.__init_not_implemented(*args.values())
 
-    def __init_implemented(self):
+    def get_data_implemented_with_inflation(self) -> InvestmentBasic:
+        """
+        Возвращает данные с учетом инфляции при реализации
+        инвестиционного проекта.
+        :return: InvestmentBasic
+        """
+        args = {
+            "inflation": INFLATION,
+            "implemented": True
+        }
+        return self.__init_implemented(*args.values())
+
+    def get_data_not_implemented_with_inflation(self) -> InvestmentBasic:
+        """
+        Возвращает данные с учетом инфляции при отказе от реализации
+        инвестиционного проекта.
+        :return: InvestmentBasic
+        """
+        args = {
+            "inflation": INFLATION,
+            "implemented": None
+        }
+        return self.__init_not_implemented(*args.values())
+
+    def __write_to_excel(self,
+                         data: InvestmentBasic,
+                         sheet_name: str,
+                         index: bool = False,
+                         truncate_sheet: bool = False) -> None:
+        df = pd.DataFrame(data.get_data())  # pandas Dataframe
+        self.__rename_df_cols(df)
+
+        data.append_data_to_excel(
+            self.__filename,
+            df,
+            sheet_name=sheet_name,
+            index=index,
+            is_truncate_sheet=truncate_sheet
+        )
+
+    @staticmethod
+    def __init_implemented(
+            inflation: None | float = None,
+            is_implemented: None | bool = None) -> InvestmentBasic:
         return InvestmentBasic(
             YEARS,
             SALES_VOL_YES,
@@ -63,11 +112,14 @@ class RunStep:
             NEW_MACHINE_LIQUIDATION_VALUE,
             OLD_MACHINE_LIQUIDATION_VALUE,
             TAX_RATE,
-            is_implemented=self.__is_implemented,
-            inflation=self.__is_inflation
+            inflation=inflation,
+            is_implemented=is_implemented
         )
 
-    def __init_not_implemented(self):
+    @staticmethod
+    def __init_not_implemented(
+            inflation: None | float = None,
+            is_implemented: None | bool = None) -> InvestmentBasic:
         return InvestmentBasic(
             YEARS,
             SALES_VOL_NO,
@@ -80,36 +132,41 @@ class RunStep:
             NEW_MACHINE_LIQUIDATION_VALUE,
             OLD_MACHINE_LIQUIDATION_VALUE,
             TAX_RATE,
-            inflation=self.__is_inflation
+            inflation=inflation,
+            is_implemented=is_implemented
         )
 
-    def __rename_df_cols(self):
-        self.__df.rename(columns=FIRST_STEP_TITLES, inplace=True)
+    @staticmethod
+    def __rename_df_cols(df: pd.DataFrame) -> None:
+        df.rename(columns=FIRST_STEP_TITLES, inplace=True)
 
-    def __write_to_excel(self):
-        self.__data.append_data_to_excel(
-            self.__filename,
-            self.__df,
-            sheet_name=self.__sheet_name,
-            index=False,
-            is_truncate_sheet=self.__is_truncate_sheet
-        )
+    def write_step_one_to_excel_file(self) -> None:
+        """
+        Записывает данные первого шага в Excel файл. Данные будут записаны
+        в следующем порядке:
+            1. Лист "Основной":
+                - При реализации инвестиционного проекта
+                - При отказе от реализации инвестиционного проекта
+            2. Лист "С учетом инфляции":
+                - При реализации инвестиционного проекта
+                - При отказе от реализации инвестиционного проекта
+        :return: None
+        """
+        self.__write_to_excel(
+            self.get_data_implemented_without_inflation(),
+            sheet_name="Основной")
+        self.__write_to_excel(
+            self.get_data_not_implemented_without_inflation(),
+            sheet_name="Основной")
 
-    def run_step_1(self):
-        self.__write_to_excel()
+        self.__write_to_excel(
+            self.get_data_implemented_with_inflation(),
+            sheet_name="С учетом инфляции")
+        self.__write_to_excel(
+            self.get_data_not_implemented_with_inflation(),
+            sheet_name="С учетом инфляции")
 
 
 if __name__ == "__main__":
-    sheet_names = [
-        "Основной", "Основной", "С учетом инфляции", "С учетом инфляции"
-    ]
-    is_implemented = [True, None, True, None]
-    inflation_data = [None, None, INFLATION, INFLATION]
-
-    for sheet_name, implemented, inflation in zip(sheet_names,
-                                                  is_implemented,
-                                                  inflation_data):
-        step_1 = RunStep(sheet_name,
-                         inflation=inflation,
-                         is_implemented=implemented)
-        step_1.run_step_1()
+    step_1 = Basic()
+    step_1.write_step_one_to_excel_file()
