@@ -1,9 +1,11 @@
 import sys
 
+import pandas as pd
+
 from utils.settings import INPUT_FILE_PATH, SHEET_1_NAME
 from sheets.sheet_utils import remove_first_item, open_excel_file
 
-data = open_excel_file(INPUT_FILE_PATH, SHEET_1_NAME)
+data: pd.DataFrame = open_excel_file(INPUT_FILE_PATH, SHEET_1_NAME)
 
 try:
     YEARS = data.iloc[2:, 0].astype(int).tolist()

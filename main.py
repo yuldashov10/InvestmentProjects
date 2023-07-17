@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from investments.base import InvestmentBasic
@@ -12,7 +14,6 @@ from sheets.sheet_1_data import (
 from sheets.sheet_2_data import (
     CAPITAL_REQUIREMENT_NO,
     CAPITAL_REQUIREMENT_YES,
-    DISCOUNT_RATE,
     INFLATION,
     NEW_MACHINE_DEPRECIATION_PERIOD,
     NEW_MACHINE_PERIOD,
@@ -24,9 +25,17 @@ from sheets.sheet_2_data import (
     VARIANT
 )
 from utils.settings import (
+    BASE_DIR,
+    DATA_COLUMN_NUM,
     DEPRECIATION_PERIOD_WHEN_PROJECT_NOT_IMPLEMENTED,
-    FIRST_STEP_TITLES, RESULT_FILE_PATH,
+    FIRST_STEP_TITLES,
+    LABELS_FOR_CHARTS,
+    RESULT_SHEET_1_NAME,
+    RESULT_SHEET_2_NAME
 )
+
+RESULT_FILENAME = f"variant_{VARIANT}_data.xlsx"
+RESULT_FILE_PATH = os.path.join(BASE_DIR, "result", RESULT_FILENAME)
 
 
 class Basic:
@@ -80,6 +89,19 @@ class Basic:
             "implemented": None
         }
         return self.__init_not_implemented(*args.values())
+
+    def get_filename(self):
+        return self.__filename
+
+    def __create_chart_bar_for_cash_flow(
+            self,
+            sheet_name: str,
+            col_num: int,
+            chart_lables: list[tuple[str, str, str]]):
+        chart_obj = BuildChart(self.get_filename(),
+                               sheet_name,
+                               col_num)
+        chart_obj.bar_chart(chart_lables)
 
     def __write_to_excel(self,
                          data: InvestmentBasic,
@@ -155,30 +177,26 @@ class Basic:
         """
         self.__write_to_excel(
             self.get_data_implemented_without_inflation(),
-            sheet_name="Основной")
+            sheet_name=RESULT_SHEET_1_NAME)
         self.__write_to_excel(
             self.get_data_not_implemented_without_inflation(),
-            sheet_name="Основной")
+            sheet_name=RESULT_SHEET_1_NAME)
 
         self.__write_to_excel(
             self.get_data_implemented_with_inflation(),
-            sheet_name="С учетом инфляции")
+            sheet_name=RESULT_SHEET_2_NAME)
         self.__write_to_excel(
             self.get_data_not_implemented_with_inflation(),
-            sheet_name="С учетом инфляции")
+            sheet_name=RESULT_SHEET_2_NAME)
+
+        self.__create_chart_bar_for_cash_flow(
+            RESULT_SHEET_1_NAME, DATA_COLUMN_NUM, LABELS_FOR_CHARTS
+        )
+        self.__create_chart_bar_for_cash_flow(
+            RESULT_SHEET_2_NAME, DATA_COLUMN_NUM, LABELS_FOR_CHARTS
+        )
 
 
 if __name__ == "__main__":
-    # step_1 = Basic()
-    # step_1.write_step_one_to_excel_file()
-    LAST_COLUMN_NUM = 12
-    chart_obj = BuildChart(r"result\variant_7_data.xlsx",
-                           "Основной",
-                           LAST_COLUMN_NUM)
-
-    labels = [
-        ("CASH FLOW при реализации", "Период времени", "Млн.руб."),
-        ("CASH FLOW при отказе", "Период времени", "Млн.руб."),
-    ]
-
-    chart_obj.bar_chart(labels)
+    step_1 = Basic()
+    step_1.write_step_one_to_excel_file()

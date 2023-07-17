@@ -1,9 +1,11 @@
 import sys
 
+import pandas as pd
+
 from sheets.sheet_utils import calc_discount_date, open_excel_file
 from utils.settings import INPUT_FILE_PATH, SHEET_2_NAME
 
-data = open_excel_file(INPUT_FILE_PATH, SHEET_2_NAME)
+data: pd.DataFrame = open_excel_file(INPUT_FILE_PATH, SHEET_2_NAME)
 
 try:
     VARIANT = int(data.iloc[0, 0])
@@ -13,8 +15,12 @@ try:
     NEW_MACHINE_DEPRECIATION_PERIOD = int(data.iloc[0, 4])
     CAPITAL_REQUIREMENT_YES = float(str(data.iloc[0, 5]).replace(",", ""))
     CAPITAL_REQUIREMENT_NO = float(str(data.iloc[0, 6]).replace(",", ""))
-    NEW_MACHINE_LIQUIDATION_VALUE = float(str(data.iloc[0, 7]).replace(",", ""))
-    OLD_MACHINE_LIQUIDATION_VALUE = float(str(data.iloc[0, 8]).replace(",", ""))
+    NEW_MACHINE_LIQUIDATION_VALUE = float(
+        str(data.iloc[0, 7]).replace(",", "")
+    )
+    OLD_MACHINE_LIQUIDATION_VALUE = float(
+        str(data.iloc[0, 8]).replace(",", "")
+    )
     REQUIRED_PROFITABILITY = float(data.iloc[0, 9])
     TAX_RATE = float(data.iloc[0, 10])
     INFLATION = float(data.iloc[0, 11])

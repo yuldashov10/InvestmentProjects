@@ -1,11 +1,10 @@
 import os
-import time
-from pprint import pprint
 from typing import Any
 
 import pandas as pd
 
 from calculations.index import Index
+from investments.excel_utils import ModifyExcelFile
 from sheets.sheet_1_data import (
     PRODUCTION_COSTS_NO,
     PRODUCTION_COSTS_YES,
@@ -16,8 +15,6 @@ from sheets.sheet_1_data import (
 from sheets.sheet_2_data import (
     CAPITAL_REQUIREMENT_NO,
     CAPITAL_REQUIREMENT_YES,
-    DISCOUNT_RATE,
-    INFLATION,
     NEW_MACHINE_DEPRECIATION_PERIOD,
     NEW_MACHINE_PERIOD,
     NEW_MACHINE_PRICE,
@@ -30,10 +27,8 @@ from sheets.sheet_2_data import (
 from utils.settings import (
     DATA_SPACING,
     DEPRECIATION_PERIOD_WHEN_PROJECT_NOT_IMPLEMENTED,
-    FIRST_STEP_SUBTITLES,
-    FIRST_STEP_TITLES,
+    FIRST_STEP_TITLES
 )
-from investments.excel_utils import ModifyExcelFile
 
 
 class InvestmentBasic:
@@ -78,7 +73,7 @@ class InvestmentBasic:
         self.__production_costs_per_unit = production_costs_per_unit
         self.__unit_price = unit_price
         self.__new_machine_price = new_machine_price
-        self.__new_machine_depreciation_period = new_machine_depreciation_period
+        self.__new_machine_deprec_period = new_machine_depreciation_period
         self.__new_machine_lifespan = new_machine_lifespan
         self.__capital_requirement = capital_requirement
         self.__new_machine_liquidation = new_machine_liquidation_value
@@ -107,7 +102,7 @@ class InvestmentBasic:
     def depreciation_allowance(self):
         return Index.depreciation_allowance(
             self.__new_machine_price,
-            self.__new_machine_depreciation_period,
+            self.__new_machine_deprec_period,
             self.__new_machine_lifespan
         )
 

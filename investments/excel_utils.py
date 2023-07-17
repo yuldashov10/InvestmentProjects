@@ -57,15 +57,15 @@ class ModifyExcelFile:
         for sheet_name in worksheets:
             for column in wb[sheet_name].columns:
                 max_length = 0
-                col_letter = get_column_letter(column[0].column)
+                col_let = get_column_letter(column[0].column)
                 for cell in column:
                     try:
                         if len(str(cell.value)) > max_length:
                             max_length = len(cell.value)
                     except TypeError:
                         pass
-                adjusted_width = (max_length + ADJUST) * WIDTH_INCREASE
-                wb[sheet_name].column_dimensions[col_letter].width = adjusted_width
+                adjust_width = (max_length + ADJUST) * WIDTH_INCREASE
+                wb[sheet_name].column_dimensions[col_let].width = adjust_width
         wb.save(filename)
 
 
@@ -77,9 +77,23 @@ class BuildChart:
         self.__data_col_num = data_col_num
 
     def bar_chart(self, chart_labels: list[tuple[str, str, str]]) -> None:
-        chart_start_row = 1
-        last_col_letter = get_column_letter(self.__ws.max_column + 2)
-        data_ranges = self.__get_rows_data_ranges()
+        """
+        Построить столюцатую диаграмму. Данные диаграммы и
+        количество диапазонов с данными должны совпадать.
+
+        :param chart_labels: Подписи для диаграммы: название диаграммы и
+        названия осей x, y. Пример:
+        [("Название 1", "Ось х", "Ось y"), ("Название 2", "Ось х", "Ось y")]
+        :return: None
+        """
+        curr_chart_coord = 1
+        last_col_letter: str = get_column_letter(self.__ws.max_column + 2)
+        data_ranges: list[tuple[int, int]] = self.__get_rows_data_ranges()
+
+        if len(data_ranges) != len(chart_labels):
+            raise ValueError(
+                "Длина диапазонов данных и данные для диаграмм различаются"
+            )
 
         for labels, ranges in zip(chart_labels, data_ranges):
             title, x_label, y_label = labels
@@ -98,29 +112,21 @@ class BuildChart:
                              max_row=end_row)
             chart.add_data(data)
 
-            self.__ws.add_chart(chart, f"{last_col_letter}{chart_start_row}")
-            chart_start_row += 15
+            self.__ws.add_chart(chart, f"{last_col_letter}{curr_chart_coord}")
+            curr_chart_coord += 15
             self.__wb.save(self.__filename)
 
-    # def __get_last_column_with_data(self):
-    #     last_column = self.__ws.max_column
-    #
-    #     for col in range(last_column, 0, -1):
-    #         columns = self.__ws[self.__ws.cell(row=1, column=col).coordinate:
-    #                             self.__ws.cell(row=self.__ws.max_row,
-    #                                            column=col).coordinate]
-    #
-    #         if all(cell.value is None for cell in columns):
-    #             last_column -= 1
-    #         else:
-    #             break
-    #
-    #     return last_column
+    def get_filename(self):
+        return self.__filename
 
     def __get_rows_data_ranges(self) -> list[tuple[int, int]]:
+        """
+        Определяет диапазоны ячеек, которые содержат данные.
+        :return: list[tuple[int, int]]
+        """
         data_ranges: list[tuple[int, int]] = []
-        start_row = None
-        max_row = self.__ws.max_row
+        start_row: int | None = None
+        max_row: int = self.__ws.max_row
 
         for row in range(1, max_row + 1):
             cell = self.__ws.cell(row=row,

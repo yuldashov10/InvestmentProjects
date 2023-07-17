@@ -1,14 +1,25 @@
+import os
 from pathlib import Path
-import platform
-
-VARIANT = 7
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FILENAME = "source.xlsx"  # название исходного Excel файла
+INPUT_FILE_PATH = os.path.join(BASE_DIR, "src", FILENAME)
 
-SHEET_1_NAME = "main"  # название 1-го листа
-SHEET_2_NAME = "source_1"  # название 2-го листа
-SHEET_3_NAME = "source_2"  # название 3-го листа
+# Названия листов в исходном файле
+SHEET_1_NAME = "main"
+SHEET_2_NAME = "source_1"
+SHEET_3_NAME = "source_2"
+
+# Названия листов в результирующем файле
+RESULT_SHEET_1_NAME = "Основной"
+RESULT_SHEET_2_NAME = "С учетом инфляции"
+RESULT_SHEET_3_NAME = "Оптимистический"
+RESULT_SHEET_4_NAME = "Пессимистический"
+RESULT_SHEET_5_NAME = "Итоговые потоки"
+RESULT_SHEET_6_NAME = "Пороговое значение цены"
+
+# Номер столбца с данными для диаграммы
+DATA_COLUMN_NUM = 12  # столбец L
 
 # ставка дисконтирования округляется до указанных знаков
 DISCOUNT_RATE_ROUND = 2
@@ -46,17 +57,15 @@ FIRST_STEP_TITLES: dict[int, str] = {
     12: 'CF (Cash Flow)(₽)',
 }
 
+LABELS_FOR_CHARTS: list[tuple[str, str, str]] = [
+    ("CASH FLOW при реализации", "Период времени", "Млн.руб."),
+    ("CASH FLOW при отказе", "Период времени", "Млн.руб."),
+]
+
 FIRST_STEP_SUBTITLES: dict[int, str] = {
     1: "При реализации проекта",
     2: "При отказе от реализации"
 }
-
-if platform.system() == "Windows":
-    INPUT_FILE_PATH = rf"{BASE_DIR}\src\{FILENAME}"
-    RESULT_FILE_PATH = rf"{BASE_DIR}\result\variant_{VARIANT}_data.xlsx"
-else:  # Linux, MacOS
-    INPUT_FILE_PATH = rf"{BASE_DIR}/src/{FILENAME}"
-    RESULT_FILE_PATH = rf"{BASE_DIR}/result/variant_{VARIANT}_data.xlsx"
 
 if __name__ == "__main__":
     print(BASE_DIR)

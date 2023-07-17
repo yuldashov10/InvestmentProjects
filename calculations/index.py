@@ -262,11 +262,14 @@ class Index:
         **Первый и последний элемент рассчитываются по следующим формулам:**
 
         - При реализации:
-            - Первый элемент списка: new_machine_price - (old_liquidation * (1 - tax_rate))
-            - Последний элемент списка: new_liquidation - (new_liquidation * tax_rate)
+            - Первый элемент списка: new_machine_price -
+            (old_liquidation * (1 - tax_rate))
+            - Последний элемент списка: new_liquidation -
+            (new_liquidation * tax_rate)
         - При отказе от реализации:
             - Первый элемент списка: Равен 0
-            - Последний элемент списка: old_liquidation - (old_liquidation * tax_rate)
+            - Последний элемент списка: old_liquidation -
+            (old_liquidation * tax_rate)
         - Между этими элементами могут быть добавлены значение 0
 
         :param period: Период времени (Срок службы нового оборудования)
