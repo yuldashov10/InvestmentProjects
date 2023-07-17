@@ -1,9 +1,13 @@
 import sys
 
-from sheet_utils import open_excel_file
+import pandas as pd
+
+from sheets.sheet_utils import open_excel_file
 from utils.settings import INPUT_FILE_PATH, SHEET_3_NAME
 
-data = open_excel_file(INPUT_FILE_PATH, sheet_name=SHEET_3_NAME, header=[0, 1])
+data: pd.DataFrame = open_excel_file(INPUT_FILE_PATH,
+                                     sheet_name=SHEET_3_NAME,
+                                     header=[0, 1])
 
 try:
     VARIANT = int(data.iloc[1, 0])

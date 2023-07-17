@@ -253,7 +253,7 @@ class Index:
                             old_liquidation: int | float,
                             new_liquidation: int | float,
                             tax_rate: float,
-                            implemented: bool = None) -> list[float]:
+                            is_implemented: bool = False) -> list[float]:
         """
         Рассчитывает капитальные выложения.\n\n
 
@@ -262,11 +262,14 @@ class Index:
         **Первый и последний элемент рассчитываются по следующим формулам:**
 
         - При реализации:
-            - Первый элемент списка: new_machine_price - (old_liquidation * (1 - tax_rate))
-            - Последний элемент списка: new_liquidation - (new_liquidation * tax_rate)
+            - Первый элемент списка: new_machine_price -
+            (old_liquidation * (1 - tax_rate))
+            - Последний элемент списка: new_liquidation -
+            (new_liquidation * tax_rate)
         - При отказе от реализации:
             - Первый элемент списка: Равен 0
-            - Последний элемент списка: old_liquidation - (old_liquidation * tax_rate)
+            - Последний элемент списка: old_liquidation -
+            (old_liquidation * tax_rate)
         - Между этими элементами могут быть добавлены значение 0
 
         :param period: Период времени (Срок службы нового оборудования)
@@ -274,14 +277,14 @@ class Index:
         :param old_liquidation: Ликвидационная стоимость старого оборудования
         :param new_liquidation: Ликвидационная стоимость нового оборудования
         :param tax_rate: Ставка налога на прибыль
-        :param implemented: При реализации или при отказе от реализации.
-        По умолчанию None
+        :param is_implemented: При реализации или при отказе от реализации.
+        По умолчанию False.
         :return: Капитальные выложения
         """
 
         zeros: list[int | float] = [0] * period
 
-        if implemented is not None:
+        if not is_implemented:
             last_item = old_liquidation - (old_liquidation * tax_rate)
             zeros.append(last_item)
             return zeros
@@ -315,14 +318,13 @@ class Index:
         :param net_profit_data: Чистая прибыль
         :param working_capital_gain_data: Прирост оборотного капитала
         :param capital_investments_data: Капитальные выложения
-        :param inflation: Расчеты с учетом инфляции. По умолчанию False
+        :param inflation: Расчеты с учетом инфляции. По умолчанию None
         :return: Cash Flow
         """
 
         FIRST_YEAR_COST = 0
 
-        if inflation is not None:
-            depreciation.insert(0, FIRST_YEAR_COST)
+        depreciation.insert(0, FIRST_YEAR_COST)
 
         net_profit_data.insert(0, FIRST_YEAR_COST)
 
