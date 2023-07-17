@@ -1,3 +1,5 @@
+import sys
+
 import openpyxl
 from openpyxl.chart import BarChart, Reference
 from openpyxl.styles import Font, PatternFill
@@ -91,9 +93,12 @@ class BuildChart:
         data_ranges: list[tuple[int, int]] = self.__get_rows_data_ranges()
 
         if len(data_ranges) != len(chart_labels):
-            raise ValueError(
-                "Длина диапазонов данных и данные для диаграмм различаются"
+            sys.stdout.write(
+                "Не удалось построить диаграммы! "
+                "Удалите полученный файл и попробуйте "
+                "снова запустить программу\n"
             )
+            return
 
         for labels, ranges in zip(chart_labels, data_ranges):
             title, x_label, y_label = labels
