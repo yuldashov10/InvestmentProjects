@@ -11,15 +11,19 @@ data: pd.DataFrame = open_excel_file(INPUT_FILE_PATH,
 
 try:
     VARIANT = int(data.iloc[1, 0])
-    PRICE_PER_UNIT_PESS = float(data.iloc[0, 1])
-    PRICE_PER_UNIT_OPT = float(data.iloc[0, 2])
-    PRODUCTION_COSTS_YES_PESS = float(data.iloc[0, 3])
-    PRODUCTION_COSTS_YES_OPT = float(data.iloc[0, 4])
-    NEW_MACHINE_LIQUIDATION_VALUE_PESS = float(data.iloc[0, 5])
-    NEW_MACHINE_LIQUIDATION_VALUE_OPT = float(data.iloc[0, 6])
-    PROBABILITY_PESS = float(data.iloc[0, 7])
-    PROBABILITY_MOST = float(data.iloc[0, 8])
-    PROBABILITY_OPT = float(data.iloc[0, 9])
+
+    PESSIMISTIC_PRICE_PERCENT = float(data.iloc[0, 1])
+    OPTIMISTIC_PRICE_PERCENT = float(data.iloc[0, 2])
+
+    PESSIMISTIC_PROD_COSTS_PERCENT = float(data.iloc[0, 3])
+    OPTIMISTIC_PROD_COSTS_PERCENT = float(data.iloc[0, 4])
+
+    PESSIMISTIC_NEW_MACHINE_LIQUIDATION_PERCENT = float(data.iloc[0, 5])
+    OPTIMISTIC_NEW_MACHINE_LIQUIDATION_PERCENT = float(data.iloc[0, 6])
+
+    PESSIMISTIC_PROBABILITY = float(data.iloc[0, 7])
+    MOST_PROBABILITY = float(data.iloc[0, 8])
+    OPTIMISTIC_PROBABILITY = float(data.iloc[0, 9])
 except Exception as err:
     sys.stdout.write(f"При чтении данных из листа "
                      f"\"{SHEET_3_NAME}\"\nпроизошла ошибка, "
@@ -29,6 +33,3 @@ except Exception as err:
 
 if __name__ == "__main__":
     print(type(VARIANT), VARIANT)
-    print(type(PROBABILITY_PESS), PROBABILITY_PESS)
-    print(type(PROBABILITY_MOST), PROBABILITY_MOST)
-    print(type(PROBABILITY_OPT), PROBABILITY_OPT)
