@@ -9,6 +9,7 @@ INPUT_FILE_PATH = os.path.join(BASE_DIR, "src", FILENAME)
 SHEET_1_NAME = "main"
 SHEET_2_NAME = "source_1"
 SHEET_3_NAME = "source_2"
+SHEET_4_NAME = "source_opt_pes"
 
 # Названия листов в результирующем файле
 RESULT_SHEET_1_NAME = "Основной"

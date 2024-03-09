@@ -31,7 +31,7 @@ class Index:
 
         if inflation is not None:
             # t - период времени
-            # start=1 - в нулевой году не может быть никакие продажи,
+            # start=1 - в нулевом году не может быть никаких продаж,
             # только после года появляется объём продаж.
             return [
                 round(sale * (unit_price * (1 + inflation) ** t),
@@ -255,7 +255,7 @@ class Index:
                             tax_rate: float,
                             is_implemented: bool = False) -> list[float]:
         """
-        Рассчитывает капитальные выложения.\n\n
+        Рассчитывает капитальные вложения.\n\n
 
         ---
 
@@ -279,7 +279,7 @@ class Index:
         :param tax_rate: Ставка налога на прибыль
         :param is_implemented: При реализации или при отказе от реализации.
         По умолчанию False.
-        :return: Капитальные выложения
+        :return: Капитальные вложения
         """
 
         zeros: list[int | float] = [0] * period
@@ -289,7 +289,9 @@ class Index:
             zeros.append(last_item)
             return zeros
 
-        first_item = new_machine_price - (old_liquidation * (1 - tax_rate))
+        first_item = abs(
+            new_machine_price - (old_liquidation * (1 - tax_rate))
+        )
         last_item = new_liquidation - (new_liquidation * tax_rate)
         zeros[0] = first_item  # заменить первый элемент
         zeros.append(last_item)
@@ -317,7 +319,7 @@ class Index:
         :param depreciation: Амортизационные отчисления
         :param net_profit_data: Чистая прибыль
         :param working_capital_gain_data: Прирост оборотного капитала
-        :param capital_investments_data: Капитальные выложения
+        :param capital_investments_data: Капитальные вложения
         :param inflation: Расчеты с учетом инфляции. По умолчанию None
         :return: Cash Flow
         """
@@ -335,7 +337,7 @@ class Index:
             raise ValueError(
                 "Количество элементов в 'Амортизационные отчисления', "
                 "'Чистая прибыль', 'Прирост оборотного капитала' и "
-                "'Капитальные выложения' различаются"
+                "'Капитальные вложения' различаются"
             )
 
         return [
