@@ -286,7 +286,8 @@ class Index:
 
         if not is_implemented:
             last_item = old_liquidation - (old_liquidation * tax_rate)
-            zeros.append(last_item)
+            zeros.append(-last_item)  # добавляется знак минус,
+            # у капитала вложений последний год и это будет дезинвестицией
             return zeros
 
         first_item = abs(
@@ -294,7 +295,8 @@ class Index:
         )
         last_item = new_liquidation - (new_liquidation * tax_rate)
         zeros[0] = first_item  # заменить первый элемент
-        zeros.append(last_item)
+        zeros.append(-last_item)  # добавляется знак минус,
+        # у капитала вложений последний год и это будет дезинвестицией
 
         return zeros
 
