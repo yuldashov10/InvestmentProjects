@@ -10,7 +10,7 @@ class SalesVolume(InvestmentProjectCalculator):
         annual_sales: list[int],
         unit_price: float | int,
         inflation: float = None,
-        currency_round: int = CURRENCY_ROUNDING_VALUE,
+        round_value: int = CURRENCY_ROUNDING_VALUE,
     ) -> None:
         """Формула расчета с учетом инфляции:\n
         `sale * (unit_price * (1 + inflation) ** time_period)`
@@ -26,13 +26,13 @@ class SalesVolume(InvestmentProjectCalculator):
         :param annual_sales: Годовой объем продаж(шт.).
         :param unit_price: Цена за единицу продукции.
         :param inflation: Годовой темп инфляции. По умолчанию None.
-        :param currency_round: Количество знаков после запятой при расчете.
+        :param round_value: Количество знаков после запятой при расчете.
         """
 
         self.annual_sales = annual_sales
         self.unit_price = unit_price
         self.inflation = inflation
-        self.__round = currency_round
+        self.__round = round_value
 
     def calc(self) -> list[float | int]:
         """Рассчитывает объем продаж с учетом инфляции и без нее.
