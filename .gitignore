@@ -3,6 +3,8 @@
 #########################
 utils/draft.py
 demo_files/
+!result/.gitkeep
+result/*
 
 #########################
 ##### PyCharm+all
